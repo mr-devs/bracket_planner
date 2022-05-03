@@ -105,7 +105,7 @@ class Bracket_Generator:
                 self._players_raw.append([new_name])
             if answer == 'remove':
                 random_player = random.choice(self._players_raw)
-                print(f"REMOVING PLAYER: {random_player}")
+                print(f"REMOVING PLAYER: {random_player[0]}")
                 self._players_raw.remove(random_player)
             
     
@@ -202,7 +202,7 @@ class Bracket_Generator:
     def print_matches(self):
         """Print the matchups!!"""
         print("-"*100)
-        print("******************   MATCHES   ******************")
+        print('*'*45, 'MATCHES', '*'*45)
         print("-"*100)
         for game_num, match in enumerate(self._matchups, start=1):
             
