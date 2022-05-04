@@ -242,8 +242,8 @@ class Bracket_Generator:
         Parameters:
         -----------
         - filepath (str) : path to a file containing the names of players to
-            be included in the bracket. If this parameter is passed, `names`
-            cannot also be included.
+            be included in the bracket. Files must contain one player's name on
+            each line. If this parameter is passed, `names` cannot also be included.
         - names (list) : a list of names (strings) of the players to be included
             in the bracket. If this parameter is passed, `filepath`
             cannot also be included.
