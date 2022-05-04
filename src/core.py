@@ -21,8 +21,9 @@ class Team:
     
 
 class Bracket_Generator:
-    def __init__(self, file_path):
+    def __init__(self, file_path=None):
         self._file_path = file_path
+        self._load_type = 'file'
         self._problem_pairs = defaultdict(list)
         self._individual_players = list()
         self._players_raw = None
@@ -65,8 +66,8 @@ class Bracket_Generator:
             raise ValueError("`seq` must be a list")
         return list(seq[pos:pos + size] for pos in range(0, len(seq), size))
     
-
-    def get_input_on_odd_names(self):
+    @staticmethod
+    def get_input_on_odd_names():
         """
         Asks for input on odd number of players. Repeatedly asks for answer
         if proper response is not given,
@@ -87,21 +88,29 @@ class Bracket_Generator:
                 print("*** INCORRECT INPUT ***")
     
     
-    def load_names(self):
+    def process_names(self):
         """
-        Load the list of names
+        Process player names.
         """
-        with open(self._file_path, "r") as f:
-            # Anyone beyond "!!" on a line indicates players who can't be matched
-            self._players_raw = [line.rstrip("\n").split("!!") for line in f]
+        if self._load_type == 'file':
+            with open(self._file_path, "r") as f:
+                # Anyone beyond "!!" on a line indicates players who can't be matched
+                self._players_raw = [line.rstrip("\n").split("!!") for line in f]
         
+        elif self._load_type == 'list':
+            self._players_raw = [line.rstrip("\n").split("!!") for line in self._players_raw]
+
+        # If there are less than four players, there is no bracket to make
+        if len(self._players_raw) < 4:
+            raise ValueError("There must be at least four players input!")
+
         # Handle an odd number of players...
         odd_number_of_players = len(self._players_raw) % 2 != 0
         if odd_number_of_players:
             answer = self.get_input_on_odd_names()
             
             if answer == 'add':
-                new_name = input("Enter the name of the new player.\n\t-->")
+                new_name = input("Enter the name of the new player.\n\t--> ")
                 self._players_raw.append([new_name])
             if answer == 'remove':
                 random_player = random.choice(self._players_raw)
@@ -135,14 +144,16 @@ class Bracket_Generator:
 
             if dont_pair_players != []:
                 self._problem_pairs[current_player] = dont_pair_players
-    
+                for temp_player in dont_pair_players:
+                    self._problem_pairs[temp_player].append(current_player)
+
     
     def randomize_player_order(self):
         """
         Shuffle player list. Also, puts users who have pair restrictions
         at the front of the list to pair them first.
         """
-        restricted_players = list(self._problem_pairs.keys())
+        restricted_players = [p.rstrip() for p in self._problem_pairs.keys()]
         
         for player in restricted_players:
             self._individual_players.remove(player)
@@ -187,7 +198,7 @@ class Bracket_Generator:
                         problem_count += 1
                         if problem_count > 10:
                             raise Exception(
-                                "Ran into a very rare problem..\n\n"
+                                "RAN INTO A VERY RARE PROBLEM...\n\n"
                                 "Please restart the script again!!"
                             )
 
@@ -219,3 +230,74 @@ class Bracket_Generator:
 
             else:
                 raise Exception("Unknown error")
+    
+
+    def make_bracket(self, filepath:str=None, names:list=None):
+        """
+        Create an entire bracket of two-player teams indicating who is
+        on each team and who will be playing one another. All teams and matchups
+        are randomized. Also handles players who should not be put on the
+        same team (see NOTE).
+
+        Parameters:
+        -----------
+        - filepath (str) : path to a file containing the names of players to
+            be included in the bracket. If this parameter is passed, `names`
+            cannot also be included.
+        - names (list) : a list of names (strings) of the players to be included
+            in the bracket. If this parameter is passed, `filepath`
+            cannot also be included.
+        
+        NOTE: Players that should not be put on the same team can be handled by
+            including *after* a player's name the `!!` immediately followed by
+            the players that they can't be paired with. For example:
+            
+            ---- Example file ----
+            Tom Brady
+            Billy Bob Thorton
+            Kanye West !!Pete Davidson
+            Stevie Nicks
+            Angelina Jolie !!Billy Bob Thorton
+            Pete Davidson
+            ----------------------
+
+            ---- Example list ----
+            lst = ['Tom Brady', 'Billy Bob Thorton', 'Kanye West !!Pete Davidson',
+            'Stevie Nicks', 'Angelina Jolie !!Billy Bob Thorton', 'Pete Davidson']
+            ----------------------
+
+            In the above example Kanye West would never be put on the same
+            team as Pete Davidson because we included `!!Pete Davidson` after
+            his name.
+            
+        REMEMBER:
+        1. There should be no space between the `!!` and the name.
+        2. It doesn't matter if you include both the pairs that can't match on
+            both lines. For instance, we don't need to include `!!Kanye West`
+            on the line that starts with `Pete Davidson`.
+        3. As you can see, the strings within a list should be input exactly
+            the same way as the lines on the file.
+        """
+
+        if (filepath is None) and (names is None):
+            raise ValueError("`filepath` or `names` must be included.")
+        if all(obj for obj in [bool(filepath), bool(names)]):
+            raise ValueError("Both `filepath` and `names` cannot be included simultaneously.")
+        if (names is not None) and (not isinstance(names, list)):
+            raise TypeError("`names` must be of type list.")
+        if (filepath is not None) and (not isinstance(filepath, str)):
+            raise TypeError("`filepath` must be of type str.")
+        
+        if filepath is not None:
+            self._file_path = filepath
+            self._load_type = 'file'
+        else:
+            self._players_raw = names
+            self._load_type = 'list'
+        
+        self.process_names()
+        self.generate_problem_pairs_and_player_list()
+        self.randomize_player_order()
+        self.generate_teams()
+        self.generate_matches()
+        self.print_matches()

@@ -47,7 +47,7 @@ if __name__ == "__main__":
     
     file_path = parse_cl_args()
     BG = Bracket_Generator(file_path=file_path)
-    BG.load_names()
+    BG.process_names()
     BG.generate_problem_pairs_and_player_list()
     BG.randomize_player_order()
     BG.generate_teams()
