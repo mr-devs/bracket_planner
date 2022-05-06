@@ -1,5 +1,5 @@
 # bracket_planner
-A simple bracket planner. Takes a list of names and randomly creates teams and then decides which teams will play one another. Handles teams of two as well as teams of one.
+A simple bracket planner. Takes a list of names and randomly creates teams and then decides which teams will play one another. Handles teams of two as well as teams of one. Odd number of teams is handled by randomly selecting which team will automatically advance to the second round.
 
 ## Example Usage
 From the root directory of this folder you can run...
