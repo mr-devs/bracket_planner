@@ -14,6 +14,9 @@ or
 python3 src/make_teams.py -f data/nan_players.txt -p 2
 ```
 
+**Replace `nan_players.txt` with your own new-line delimited file of names to use.**
+
+
 Can also run the below for more information about script options.
 
 ```
