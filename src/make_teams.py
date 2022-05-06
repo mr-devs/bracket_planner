@@ -159,12 +159,11 @@ if __name__ == "__main__":
             f"They are:\n{players_list}"
         )
 
+    # Create random teams of size `players_per_team`
     random.shuffle(players)
-
-    # Create teams of size `players_per_team`
     teams = chunker(seq=players, size=players_per_team)
 
-    # Create matchups
+    # Create random matchups
     random.shuffle(teams)
     matchups = chunker(seq=teams, size=2)
     print_matches(matchups, players_per_team)
