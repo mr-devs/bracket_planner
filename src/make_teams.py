@@ -167,5 +167,4 @@ if __name__ == "__main__":
     # Create matchups
     random.shuffle(teams)
     matchups = chunker(seq=teams, size=2)
-    print(matchups)
     print_matches(matchups, players_per_team)
