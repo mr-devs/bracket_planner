@@ -154,7 +154,7 @@ if __name__ == "__main__":
         players_w_nums = [f"{idx}. {p}" for idx, p in enumerate(players, start=1)]
         players_list = "\n".join(players_w_nums)
         raise ValueError(
-            "There must be an even number of players!\n\n"
+            "There must be an even number of players for teams of two!!\n\n"
             f"I count {len(players)} players, currently. "
             f"They are:\n{players_list}"
         )
