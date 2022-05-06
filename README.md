@@ -5,19 +5,20 @@ A simple bracket planner. Takes a list of names and randomly creates teams and t
 From the root directory of this folder you can run...
 
 ```
-python3 src/make_teams.py --file data/nan_players.txt --players-per-team 2
+python3 src/make_teams.py --file data/players.txt --players-per-team 2
 ```
 
 or
 
 ```
-python3 src/make_teams.py -f data/nan_players.txt -p 2
+python3 src/make_teams.py -f data/players.txt -p 2
 ```
 
-**Replace `nan_players.txt` with your own new-line delimited file of names to use.**
+**Edit `players.txt` to include the names to use. One name per file**
 
+---
 
-Can also run the below for more information about script options.
+Run the below from the root directory for more information about script options.
 
 ```
 python3 src/make_teams.py -h
